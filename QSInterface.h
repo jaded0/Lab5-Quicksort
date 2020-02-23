@@ -133,4 +133,3 @@ public:
 };
 
 #endif /* QSINTERFACE_H_ */
-	
