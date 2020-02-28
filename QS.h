@@ -17,6 +17,9 @@ class QS {
 private:
   int *ra;
   size_t size;
+  int index;
+  void swap(int&c,int&b);
+  bool sort(int start, int finish);
 public:
     QS();
     ~QS();

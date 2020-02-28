@@ -11,7 +11,7 @@
 
 using namespace std;
 
-QS::QS(): size(0)  {}
+QS::QS(): size(0), index(0)  {}
 QS::~QS() {}
 /*
 * sortAll()
@@ -21,8 +21,31 @@ QS::~QS() {}
 *
 * Does nothing if the array is empty.
 */
-void QS::sortAll(){ }
+void QS::sortAll(){
+  cout << sort(0, index-1) << endl;
+}
+bool QS::sort(int start, int finish){
+  cin.ignore();
+  //cout << start << " - " << finish << endl;
+  if (finish - start>1){
+    int pivot = partition(start,finish,medianOfThree(start, finish));
+    if(pivot == -1) return false;
+    //swap(ra[start], ra[pivot]);
+    //cout <<  "so far: " << getArray() << endl;
+    //cout << "pivot " << pivot << endl;
+    sort(start, pivot);
+    //cout << "pivot " << pivot << endl;
+    sort(pivot+1, finish);
+    return true;
+  } else return false;
+}
 
+
+void QS::swap(int&c,int&b){
+    c=c+b;
+    b=c-b;
+    c=c-b;
+}
 /*
 * medianOfThree()
 *
@@ -48,7 +71,25 @@ void QS::sortAll(){ }
 * @return
 *		the index of the pivot (middle index); -1 if provided with invalid input
 */
-int QS::medianOfThree(int left, int right){ }
+int QS::medianOfThree(int first, int last){
+  if(index==0 || first >= last || last > index-1  || first < 0) return -1;
+  try {
+    int middle;
+    if(first + last == 0) return -1;
+    middle = (first + last)/2;
+    //sort!
+    if(ra[first] > ra[middle]) { cout << "Aswap " << first << " and " << middle << endl;swap(ra[first], ra[middle]);}
+    cout <<  "so far: " << getArray() << endl;
+    if(ra[middle] > ra[last]) { cout << "Bswap " << middle << " and " << last << endl;swap(ra[middle], ra[last]);}
+    cout <<  "so far: " << getArray() << endl;
+    if(ra[first] > ra[middle]) { cout << "Cswap " << first << " and " << middle << endl;swap(ra[first], ra[middle]);}
+    cout <<  "so far: " << getArray() << endl;
+
+    return middle;
+  } catch(...) {
+    return -1;
+  }
+}
 
 /*
 * Partitions a subarray around a pivot value selected according to
@@ -73,7 +114,31 @@ int QS::medianOfThree(int left, int right){ }
 *		the pivot's ending index after the partition completes; -1 if
 * 		provided with bad input
 */
-int QS::partition(int left, int right, int pivotIndex){ }
+int QS::partition(int first, int last, int pivotIndex){
+  cout <<  "\nstarting out: " << getArray() << endl;
+  if(index==0 || pivotIndex == -1 || first >= last || last > index-1 || first < 0 || pivotIndex>last) return -1;
+  if (first != pivotIndex) { cout << "1swap " << first << " and " << pivotIndex << endl;swap(ra[first], ra[pivotIndex]);}
+  cout << "first: " << first << " last " << last << " pivot index: " << pivotIndex << endl;
+  int up = first + 1;
+  int down = last - 1;
+  cout <<  "so far: " << getArray() << " up: " << up << " down: " << down << endl;
+
+  do {
+    while((up != last) && !(ra[first]<ra[up])) ++up;
+    cout <<  "so far: " << getArray() << " up: " << up << " down: " << down << endl;
+
+    while (ra[first] < ra[down]) --down;
+    cout <<  "so far: " << getArray() << " up: " << up << " down: " << down << endl;
+
+    if (up<down){ cout << "2swap " << up << " and " << down << endl; swap(ra[up], ra[down]); }
+    cout <<  "so far: " << getArray() << " up: " << up << " down: " << down << endl;
+
+  } while (up<down);
+  if (first != down){ cout << "3swap " << first << " and " << down << endl; swap(ra[first], ra[down]);}
+  cout <<  "so far: " << getArray() << " up: " << up << " down: " << down << endl;
+
+  return down;
+}
 
 /*
 * Produces a comma delimited string representation of the array. For example: if my array
@@ -88,14 +153,12 @@ int QS::partition(int left, int right, int pivotIndex){ }
 */
 string QS::getArray() const{
   string response;
-  //fill in the array with 0s
-  for (size_t i = 0; i < size; i++) {
-    ra[i] = 0;
-  }
-  for (size_t i = 0; i < size; i++) {
-    response += to_string(ra[i]) + ", ";
-  }
-  return response.substr(0, response.length() - 1);
+  if (index>0){
+    for (size_t i = 0; i < index; i++) {
+      response += to_string(ra[i]) + ",";
+    }
+    return response.substr(0, response.length() - 1);
+  } else return "";
 }
 
 
@@ -103,7 +166,7 @@ string QS::getArray() const{
 * Returns the number of elements which have been added to the array.
 */
 int QS::getSize() const{
-  return size;
+  return index;
 }
 
 /*
@@ -116,7 +179,14 @@ int QS::getSize() const{
 * If the array is filled, do nothing.
 * returns true if a value was added, false otherwise.
 */
-bool QS::addToArray(int value){ }
+bool QS::addToArray(int value){
+  if (index<size){
+    //cout << value << endl;
+    ra[index] = value;
+    index++;
+    return true;
+  } else return false;
+}
 
 /*
 * Dynamically allocates an array with the given capacity.
@@ -134,6 +204,11 @@ bool QS::createArray(int capacity){
   if(capacity>0) {
     ra = new int[capacity];
     size = capacity;
+    index = 0;
+    //fill in the array with 0s
+    for (size_t i = 0; i < size; i++) {
+      ra[i] = 0;
+    }
     return true;
   }
   return false;
@@ -145,4 +220,5 @@ bool QS::createArray(int capacity){
 void QS::clear(){
   if(size != 0) delete[] ra;
   size = 0;
+  index = 0;
 }
