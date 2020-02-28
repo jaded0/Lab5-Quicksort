@@ -28,7 +28,7 @@ bool QS::sort(int start, int finish){
   cin.ignore();
   //cout << start << " - " << finish << endl;
   if (finish - start>1){
-    int pivot = partition(start,finish,medianOfThree(start, finish));
+    int pivot = partition(start,finish-1,medianOfThree(start, finish));
     if(pivot == -1) return false;
     //swap(ra[start], ra[pivot]);
     //cout <<  "so far: " << getArray() << endl;
@@ -120,7 +120,7 @@ int QS::partition(int first, int last, int pivotIndex){
   if (first != pivotIndex) { cout << "1swap " << first << " and " << pivotIndex << endl;swap(ra[first], ra[pivotIndex]);}
   cout << "first: " << first << " last " << last << " pivot index: " << pivotIndex << endl;
   int up = first + 1;
-  int down = last - 1;
+  int down = last;
   cout <<  "so far: " << getArray() << " up: " << up << " down: " << down << endl;
 
   do {
